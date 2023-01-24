@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
   <table>
   <tr>
     <td id="cell-1"></td>
@@ -17,10 +18,32 @@
     <td id="cell-9"></td>
   </tr>
 </table>
+
+<button id="reset-button">Reset</button>
+<div id="winner"></div>
 <style>
+  #code-display {
+  position: absolute;
+  top: 500px;
+  left: 50%;
+  width: 150px;
+  height: 50px;
+  background-color: #da0808;
+  color: black;
+  text-align: center;
+  padding: 20px;
+}
+  #winner {
+  text-align: center;
+  font-size: 20px;
+  margin-top: 10px;
+}
+
   table {
-  border: 2px solid black;
   border-collapse: collapse;
+  background-color: #0079d3;
+  margin: 0 auto;
+  width: 300px;
 }
 
 td {
@@ -30,21 +53,59 @@ td {
   vertical-align: middle;
   font-size: 48px;
   border: 1px solid black;
+  font-family: "Arial", sans-serif;
+  font-size: 30px;
+  text-align: center;
+  color: white;
+}
+
+#reset-button {
+  display: block;
+  margin: 10px auto;
+}
+
+@media only screen and (max-width: 600px) {
+  table {
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  #reset-button {
+    width: 100%;
+    margin: 10px auto;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  table {
+    width: 300px;
+    height: 300px;
+  }
+  #reset-button {
+    width: 100px;
+    height: 40px;
+  }
 }
 </style>
 <script>
   let currentPlayer = "X";
+let moves = 0;
+let gameOver = false;
 const winningCombinations = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7], [2, 5, 8], [3, 6, 9], [1, 5, 9], [3, 5, 7]];
 
 document.querySelectorAll("td").forEach(function(cell) {
   cell.addEventListener("click", function() {
-    if (cell.textContent === "") {
+    if (!gameOver && cell.textContent === "") {
       cell.textContent = currentPlayer;
       checkForWin(currentPlayer);
+      checkForTie();
       currentPlayer = (currentPlayer === "X") ? "O" : "X";
+      moves++;
     }
   });
 });
+
+document.getElementById("reset-button").addEventListener("click", resetGame);
 
 function checkForWin(player) {
   for (let i = 0; i < winningCombinations.length; i++) {
@@ -56,9 +117,16 @@ function checkForWin(player) {
       }
     }
     if (win) {
-      alert("Player " + player + " wins!");
-      resetGame();
+      document.getElementById("winner").innerHTML = "Player " + player + " wins!";
+      gameOver = true;
     }
+  }
+}
+
+function checkForTie() {
+  if (moves === 9) {
+    document.getElementById("winner").innerHTML = "It's a Tie!";
+    gameOver = true;
   }
 }
 
@@ -66,7 +134,10 @@ function resetGame() {
   document.querySelectorAll("td").forEach(function(cell) {
     cell.textContent = "";
   });
+  document.getElementById("winner").innerHTML = "";
   currentPlayer = "X";
+  moves = 0;
+  gameOver = false;
 }
 </script>
 </html>
